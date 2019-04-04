@@ -1,1 +1,1 @@
-import functions as inchicompare
+from functions import *
