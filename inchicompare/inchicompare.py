@@ -66,9 +66,9 @@ def parse(inchi):
     return layers
 
 def compare(inchi1, inchi2):
-    #normalise inchis and parse
-    inchi1 = parse_inchi(normalise_inchi(inchi1))
-    inchi2 = parse_inchi(normalise_inchi(inchi2))
+    #parse inchis
+    inchi1 = parse_inchi(inchi1)
+    inchi2 = parse_inchi(inchi2)
     
     inchi1_keys = set(inchi1.keys())
     inchi2_keys = set(inchi2.keys())
@@ -92,6 +92,8 @@ def compare(inchi1, inchi2):
             
     return differences
 
+# These functions require OpenBabel and pybel
+
 # def mol_fp_compare(inchi1, inchi2):
 #     inchi1 = normalise_inchi(inchi1)
 #     inchi2 = normalise_inchi(inchi2)
@@ -99,3 +101,7 @@ def compare(inchi1, inchi2):
 #     mol2_fp = pybel.readstring('inchi',inchi2).calcfp('fp2')
     
 #     return mol1_fp | mol2_fp
+
+#def normalise_inchi(inchi):
+#    mol = pybel.readstring('inchi',inchi).write('can')
+#    return pybel.readstring('can', mol).write('inchi')[:-1]
