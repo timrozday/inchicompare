@@ -9,9 +9,9 @@ setup(
     # Needed to actually package something
     packages=['inchicompare'],
     # Needed for dependencies
-    install_requires=[],
+    install_requires=[openbabel, pybel],
     # *strongly* suggested for sharing
-    version='0.1',
+    version='0.2',
     # The license can be anything you like
     license='Do what you like with it (just nothing evil)',
     description='A few functions for splitting, normalising and comparing InChi strings.',
