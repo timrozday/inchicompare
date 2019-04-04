@@ -4,7 +4,7 @@ A few functions for splitting, normalising and comparing InChi strings. Detects 
 Functions:
 * __split_inchi(inchi)__ where inchi is a str. Returns list of str.
 
-* __get_prefix_dict()__ returns a dict that gives the long title for each of the prefixes
+* __get_prefix_dict()__ returns a dict that gives the long title for each of the prefixes (sorry, not very pythonic)
 
 * __parse_inchi(inchi)__ where inchi is a str. Returns dict of all the layers and sublayers. The key of each dict item is the prefix.
 
