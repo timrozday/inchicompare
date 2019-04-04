@@ -1,5 +1,5 @@
-# import openbabel as ob
-# import pybel
+import openbabel as ob
+import pybel
 
 def split(inchi):
     layers = inchi.split('/') #split into layers with the slash delimiter
@@ -94,14 +94,14 @@ def compare(inchi1, inchi2):
 
 # These functions require OpenBabel and pybel
 
-# def mol_fp_compare(inchi1, inchi2):
-#     inchi1 = normalise_inchi(inchi1)
-#     inchi2 = normalise_inchi(inchi2)
-#     mol1_fp = pybel.readstring('inchi',inchi1).calcfp('fp2')
-#     mol2_fp = pybel.readstring('inchi',inchi2).calcfp('fp2')
+#Compare InChIs with OpenBabel molecular fingerprints
+def fp_compare(inchi1, inchi2):
+    mol1_fp = pybel.readstring('inchi',inchi1).calcfp('fp2')
+    mol2_fp = pybel.readstring('inchi',inchi2).calcfp('fp2')
     
-#     return mol1_fp | mol2_fp
+    return mol1_fp | mol2_fp
 
-#def normalise_inchi(inchi):
-#    mol = pybel.readstring('inchi',inchi).write('can')
-#    return pybel.readstring('can', mol).write('inchi')[:-1]
+#Convert ot canonical SMILES and back again
+def normalise(inchi):
+   mol = pybel.readstring('inchi',inchi).write('can')
+   return pybel.readstring('can', mol).write('inchi')[:-1]
