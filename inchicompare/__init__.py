@@ -1,1 +1,1 @@
-import functions
+from inchicompare import functions
