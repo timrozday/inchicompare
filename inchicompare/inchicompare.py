@@ -1,4 +1,4 @@
-import openbabel as ob
+#import openbabel as ob
 import pybel
 
 def split(inchi):
