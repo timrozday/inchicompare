@@ -1,7 +1,7 @@
 # import openbabel as ob
 # import pybel
 
-def split_inchi(inchi):
+def split(inchi):
     layers = inchi.split('/') #split into layers with the slash delimiter
     version = layers[0] #save the version header for later
 
@@ -36,7 +36,7 @@ def split_inchi(inchi):
     return split_inchi_strs
 
 #I learnt Java first you know
-def get_prefix_dict():
+def get_prefixes():
 	prefix_dict = {'c': 'connectivity', 
 	               'h': 'hydrogen', 
 	               'q': 'charge', 
@@ -52,7 +52,7 @@ def get_prefix_dict():
 
 	return prefix_dict
 
-def parse_inchi(inchi):
+def parse(inchi):
     inchi = inchi.split('/')
     
     version = inchi[0]
@@ -65,7 +65,7 @@ def parse_inchi(inchi):
     
     return layers
 
-def inchi_str_compare(inchi1, inchi2):
+def compare(inchi1, inchi2):
     #normalise inchis and parse
     inchi1 = parse_inchi(normalise_inchi(inchi1))
     inchi2 = parse_inchi(normalise_inchi(inchi2))
