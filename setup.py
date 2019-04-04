@@ -7,7 +7,7 @@ setup(
     author='Tim Rozday',
     author_email='timrozday@ebi.ac.uk',
     # Needed to actually package something
-    packages=['inchi_compare'],
+    packages=['inchicompare'],
     # Needed for dependencies
     install_requires=[],
     # *strongly* suggested for sharing
