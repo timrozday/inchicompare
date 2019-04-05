@@ -9,7 +9,7 @@ setup(
     # Needed to actually package something
     packages=['inchicompare'],
     # Needed for dependencies
-    install_requires=['pybel'],
+    install_requires=['openbabel','re'],
     # *strongly* suggested for sharing
     version='0.2',
     # The license can be anything you like
