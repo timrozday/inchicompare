@@ -26,24 +26,13 @@ def split(inchi):
 
         #check for multipliers
         data_list_expanded = []
-        content = ""
-        multi_count = 0
-        for i in range(len(split_inchis)):
-            if multi_count > 0:
-                # apply multiplier term until it is 0
-                multi_count -= 1
-                data_list_expanded.append(content)
-            else:
-                #check for a multiplier term
-                if i < len(data_list):
-                    data = data_list[i]
-                    m = re.search('^([0-9]+)\*(.*)', data)
-                    if m:
-                        multi_count = int(m.group(1))
-                        content = m.group(2)
-                        data_list_expanded.append(content)
-                    else:
-                        data_list_expanded.append(data)
+        
+        for i in range(len(data_list)):
+            m = re.search('^([0-9]+)\*(.*)', data_list[i])
+            n = int(m.group(1)) if m else 1 
+            data = m.group(2) if m else data_list[i]
+            for j in range(n):
+                data_list_expanded.append(data)
         
         data_list = data_list_expanded
         
