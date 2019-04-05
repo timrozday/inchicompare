@@ -9,7 +9,7 @@ setup(
     # Needed to actually package something
     packages=['inchicompare'],
     # Needed for dependencies
-    install_requires=[], # openbabel must be installed via conda
+    install_requires=[], # openbabel must be installed via conda, switch this to rdkit which has a nicer python API, will need to install manually with `conda create -c rdkit -n my-rdkit-env rdkit` and then install and use this package in the rdkit virtualenv.
     # *strongly* suggested for sharing
     version='0.2',
     # The license can be anything you like
