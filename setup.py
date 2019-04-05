@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     # Needed to silence warnings (and to be a worthwhile package)
-    name='InChi Compare',
+    name='inchicompare',
     url='https://github.com/timrozday/inchi_compare',
     author='Tim Rozday',
     author_email='timrozday@ebi.ac.uk',
