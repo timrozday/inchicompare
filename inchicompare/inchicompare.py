@@ -1,5 +1,6 @@
 #import openbabel as ob
 import pybel
+import re
 
 def split(inchi):
     layers = inchi.split('/') #split into layers with the slash delimiter
@@ -8,24 +9,47 @@ def split(inchi):
     #deterine how many molcules by splitting the chemical formula
     split_inchis = []
     for i, data in enumerate(layers[1].split(".")):
-        if len(split_inchis) <= i:
-            split_inchis.append([])
-        split_inchis[i].append(data)
+        numerator = re.findall('^[0-9]+', data)
+        if len(numerator) > 0:
+            num = int(numerator[0])
+            data = data[1:]
+            for j in range(num):
+                split_inchis.append([data])
+        else:
+            split_inchis.append([data])
 
     #add the rest of the layers
     for layer in layers[2:]:
-        prefix = layer[0] #save the prefex as it isn't repeated for each molecule
-        data_list = layer[1:].split(';')
+        prefix = layer[0] #save the prefix as it isn't repeated for each molecule
+        sep = '.' if prefix in ['m'] else ';'
+        data_list = layer[1:].split(sep)
 
+        #check for multipliers
+        data_list_expanded = []
+        content = ""
+        multi_count = 0
+        for i in range(len(split_inchis)):
+            if multi_count > 0:
+                # apply multiplier term until it is 0
+                multi_count -= 1
+                data_list_expanded.append(content)
+            else:
+                #check for a multiplier term
+                if i < len(data_list):
+                    data = data_list[i]
+                    m = re.search('^([0-9]+)\*(.*)', data)
+                    if m:
+                        multi_count = int(m.group(1))
+                        content = m.group(2)
+                        data_list_expanded.append(content)
+                    else:
+                        data_list_expanded.append(data)
+        
+        data_list = data_list_expanded
+        
         #add the data to the appropriate molecules
-        if len(data_list) is len(split_inchis):
-            for i, data in enumerate(data_list):
-                split_inchis[i].append(prefix+data)
-    #     else:        
-    #         for i, mol in enumerate(split_inchis):
-    #             split_inchis[i].append(data_list[0])
-
-        layers_temp.append([prefix, data])
+        for i, data in enumerate(data_list):
+            if len(data) > 0: split_inchis[i].append(prefix+data)
 
     #join the data into a string
     split_inchi_strs = []
@@ -63,7 +87,24 @@ def parse(inchi):
         data = layer[1:]
         layers[prefix] = data
     
-    return layers
+    return version, cf, layers
+
+def filter_layers(inchi, filter):
+    version, cf, layers = parse(inchi)
+
+    inchi_layer_order = ['c','h','q','f','d','t','i','r']
+
+    filtered_layers = {}
+    for k,v in layers.items():
+        if k in filter:
+            filtered_layers[k] = v
+
+    ordered_filtered_layers = [version, cf]
+    for layer_prefix in inchi_layer_order:
+        if layer_prefix in filtered_layers.keys():
+            ordered_filtered_layers.append(layer_prefix + filtered_layers[layer_prefix])
+
+    return '/'.join(ordered_filtered_layers)
 
 def compare(inchi1, inchi2):
     #parse inchis
@@ -103,5 +144,5 @@ def fp_compare(inchi1, inchi2):
 
 #Convert ot canonical SMILES and back again
 def normalise(inchi):
-   mol = pybel.readstring('inchi',inchi).write('can')
-   return pybel.readstring('can', mol).write('inchi')[:-1]
+    mol = pybel.readstring('inchi',inchi).write('can')
+    return pybel.readstring('can', mol).write('inchi')[:-1]
