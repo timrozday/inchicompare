@@ -1,1 +1,1 @@
-from inchicompare import *
+__all__ = ['inchicompare']
