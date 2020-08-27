@@ -50,20 +50,20 @@ def split(inchi):
 
 #I learnt Java first you know
 def get_prefixes():
-	prefix_dict = {'c': 'connectivity', 
-	               'h': 'hydrogen', 
-	               'q': 'charge', 
-	               'p': 'protonation', 
-	               'f': 'fixed H', 
-	               'd': 'double bond stereoisomerism', 
-	               't': 'tetrahedral stereoisomerism',
-	               'i': 'isotopism',
-	               'r': 'reconnection'
-	              }
-	#/m and /s are used as flags specifying absolute and relative stereochemistry and requesting the inverse arrangement of a double bond stereoisomer.
-	#I've chosen not to handle these, but that might be a good idea in the future
+    prefix_dict = {'c': 'connectivity', 
+                   'h': 'hydrogen', 
+                   'q': 'charge', 
+                   'p': 'protonation', 
+                   'f': 'fixed H', 
+                   'd': 'double bond stereoisomerism', 
+                   't': 'tetrahedral stereoisomerism',
+                   'i': 'isotopism',
+                   'r': 'reconnection'
+                  }
+    #/m and /s are used as flags specifying absolute and relative stereochemistry and requesting the inverse arrangement of a double bond stereoisomer.
+    #I've chosen not to handle these, but that might be a good idea in the future
 
-	return prefix_dict
+    return prefix_dict
 
 def parse(inchi):
     inchi = inchi.split('/')
