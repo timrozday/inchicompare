@@ -1,5 +1,5 @@
 #import openbabel as ob
-import pybel
+# import pybel
 import re
 
 def split(inchi):
@@ -97,41 +97,41 @@ def filter_layers(inchi, filter):
 
 def compare(inchi1, inchi2):
     #parse inchis
-    inchi1 = parse_inchi(inchi1)
-    inchi2 = parse_inchi(inchi2)
+    v1, cf1, inchi1 = parse(inchi1)
+    v2, cf2, inchi2 = parse(inchi2)
+    
+    inchi1['cf'] = cf1
+    inchi2['cf'] = cf2
     
     inchi1_keys = set(inchi1.keys())
     inchi2_keys = set(inchi2.keys())
     
-    print(inchi1_keys)
-    print(inchi2_keys)
-    print(inchi1_keys.intersection(inchi2_keys))
     differences = {}
     
     #handle layers common in both inchis
-    for key in inchi1_keys.intersection(inchi2_keys):
-        if inchi1[key] != inchi1[key]:
-            differences[key] = [inchi1[key], inchi2[key]]
+    for key in inchi1_keys & inchi2_keys:
+        if inchi1[key] != inchi2[key]:
+	    differences[key] = [inchi1[key], inchi2[key]]
     
     #handles layers present in one but not the other
     for key in inchi1_keys - inchi2_keys:
-        differences[key] = [inchi1[key], None]
-                            
+         differences[key] = [inchi1[key], None]
+    
     for key in inchi2_keys - inchi1_keys:
         differences[key] = [None, inchi2[key]]
-            
+    
     return differences
 
 # These functions require OpenBabel and pybel
 
 #Compare InChIs with OpenBabel molecular fingerprints
-def fp_compare(inchi1, inchi2):
-    mol1_fp = pybel.readstring('inchi',inchi1).calcfp('fp2')
-    mol2_fp = pybel.readstring('inchi',inchi2).calcfp('fp2')
+# def fp_compare(inchi1, inchi2):
+#     mol1_fp = pybel.readstring('inchi',inchi1).calcfp('fp2')
+#     mol2_fp = pybel.readstring('inchi',inchi2).calcfp('fp2')
     
-    return mol1_fp | mol2_fp
+#     return mol1_fp | mol2_fp
 
-#Convert ot canonical SMILES and back again
-def normalise(inchi):
-    mol = pybel.readstring('inchi',inchi).write('can')
-    return pybel.readstring('can', mol).write('inchi')[:-1]
+# #Convert ot canonical SMILES and back again
+# def normalise(inchi):
+#     mol = pybel.readstring('inchi',inchi).write('can')
+#     return pybel.readstring('can', mol).write('inchi')[:-1]
