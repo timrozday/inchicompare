@@ -111,11 +111,11 @@ def compare(inchi1, inchi2):
     #handle layers common in both inchis
     for key in inchi1_keys & inchi2_keys:
         if inchi1[key] != inchi2[key]:
-	    differences[key] = [inchi1[key], inchi2[key]]
+        differences[key] = [inchi1[key], inchi2[key]]
     
     #handles layers present in one but not the other
     for key in inchi1_keys - inchi2_keys:
-         differences[key] = [inchi1[key], None]
+        differences[key] = [inchi1[key], None]
     
     for key in inchi2_keys - inchi1_keys:
         differences[key] = [None, inchi2[key]]
