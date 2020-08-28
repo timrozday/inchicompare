@@ -1,6 +1,7 @@
 import re
 import rdkit
 import itertools as it
+from collections import defaultdict
 
 def split_inchi(inchi):
     mol = rdkit.Chem.MolFromInchi(inchi)
