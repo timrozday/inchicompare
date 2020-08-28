@@ -1,7 +1,7 @@
 import re
 import rdkit
 
-def split_mol(inchi):
+def split_inchi(inchi):
     mol = rdkit.Chem.MolFromInchi(inchi)
     for m in rdkit.Chem.rdmolops.GetMolFrags(mol,asMols=True):
         yield rdkit.Chem.MolToInchi(m)
@@ -131,8 +131,8 @@ def compare_split(inchi1, inchi2,
                   filter_layers = {'h','q','p','f','i'}):  
     
     results = defaultdict(lambda :defaultdict(dict))
-    split_inchi1 = list(split_mol(inchi1))
-    split_inchi2 = list(split_mol(inchi2))
+    split_inchi1 = list(split_inchi(inchi1))
+    split_inchi2 = list(split_inchi(inchi2))
     
     results['...matches...'][(inchi1,inchi2)] = compare(inchi1,inchi2)
     for i2 in split_inchi2:
@@ -166,11 +166,11 @@ def join_inchis(inchi_list):
 def compare_subset(inchi1, inchi2, 
                   filter_layers = {'h','q','p','f','i'}):
     
-    split_inchi1 = list(split_mol(inchi1))
-    split_inchi2 = list(split_mol(inchi2))
+    split_inchi1 = list(split_inchi(inchi1))
+    split_inchi2 = list(split_inchi(inchi2))
     
     matches = []
-    for i,((i1,s1),(i2,s2)) in enumerate(it.product(enumerate(split_mol(inchi1)), enumerate(split_mol(inchi2)))):
+    for i,((i1,s1),(i2,s2)) in enumerate(it.product(enumerate(split_inchi1), enumerate(split_inchi2))):
         differences = compare(s1,s2)
         if not (set(differences.keys()) - filter_layers):
             matches.append((i,i1,i2,differences))
