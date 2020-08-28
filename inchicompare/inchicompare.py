@@ -1,6 +1,10 @@
-#import openbabel as ob
-# import pybel
 import re
+import rdkit
+
+def split_mol(inchi):
+    mol = rdkit.Chem.MolFromInchi(inchi)
+    for m in rdkit.Chem.rdmolops.GetMolFrags(mol,asMols=True):
+        yield rdkit.Chem.MolToInchi(m)
 
 def split(inchi):
     layers = inchi.split('/') #split into layers with the slash delimiter
@@ -122,16 +126,69 @@ def compare(inchi1, inchi2):
     
     return differences
 
-# These functions require OpenBabel and pybel
-
-#Compare InChIs with OpenBabel molecular fingerprints
-# def fp_compare(inchi1, inchi2):
-#     mol1_fp = pybel.readstring('inchi',inchi1).calcfp('fp2')
-#     mol2_fp = pybel.readstring('inchi',inchi2).calcfp('fp2')
+def compare_split(inchi1, inchi2, 
+                  filter_compare_types={'...matches...', '...matches a component of...', '...has a component which matches...', '...has a component which matches a component of...'},  # '...has a component which matches a component of...'
+                  filter_layers = {'h','q','p','f','i'}):  
     
-#     return mol1_fp | mol2_fp
+    results = defaultdict(lambda :defaultdict(dict))
+    split_inchi1 = list(split_mol(inchi1))
+    split_inchi2 = list(split_mol(inchi2))
+    
+    results['...matches...'][(inchi1,inchi2)] = compare(inchi1,inchi2)
+    for i2 in split_inchi2:
+        results['...matches a component of...'][(inchi1,i2)] = compare(inchi1,i2)
+    for i1 in split_inchi1:
+        results['...has a component which matches...'][(i1,inchi2)] = compare(i1,inchi2)
+    for i1,i2 in it.product(split_inchi1,split_inchi2):
+        results['...has a component which matches a component of...'][(i1,i2)] = compare(i1,i2)
+    
+    filtered_results = {k:v for k,v in results.items() if k in filter_compare_types}  # remove unauthorised compare_types
+    
+    # remove compares with unauthorised differences
+    for compare_type, compare_data in filtered_results.items():
+        for (i1,i2), differences in compare_data.items():
+            filtered_results[compare_type] = {(i1,i2):differences for (i1,i2),differences in compare_data.items() if not (set(differences.keys()) - filter_layers)}
+    
+    filtered_results = {k:v for k,v in filtered_results.items() if v}  # remove empty compare_types
+    
+    return filtered_results
 
-# #Convert ot canonical SMILES and back again
-# def normalise(inchi):
-#     mol = pybel.readstring('inchi',inchi).write('can')
-#     return pybel.readstring('can', mol).write('inchi')[:-1]
+def join_inchis(inchi_list):
+    if not inchi_list:
+        return None
+    
+    r = rdkit.Chem.MolFromInchi(inchi_list[0])
+    for i in inchi_list:
+        r = rdkit.Chem.CombineMols(r,rdkit.Chem.MolFromInchi(i))
+    
+    return rdkit.Chem.MolToInchi(r)
+
+def compare_subset(inchi1, inchi2, 
+                  filter_layers = {'h','q','p','f','i'}):
+    
+    split_inchi1 = list(split_mol(inchi1))
+    split_inchi2 = list(split_mol(inchi2))
+    
+    matches = []
+    for i,((i1,s1),(i2,s2)) in enumerate(it.product(enumerate(split_mol(inchi1)), enumerate(split_mol(inchi2)))):
+        differences = compare(s1,s2)
+        if not (set(differences.keys()) - filter_layers):
+            matches.append((i,i1,i2,differences))
+        
+    matches = sorted(matches, key=lambda x:(len(x[3]),x[0]))
+    joined_inchi1 = []
+    joined_inchi2 = []
+    for i,i1,i2,d in matches:
+        if not (i1 in joined_inchi1 or i2 in joined_inchi2):
+            joined_inchi1.append(i1)
+            joined_inchi2.append(i2)
+    
+    p1 = (len(joined_inchi1),len(split_inchi1))
+    p2 = (len(joined_inchi2),len(split_inchi2))
+    
+    joined_inchi1 = join_inchis([split_inchi1[i] for i in joined_inchi1])
+    joined_inchi2 = join_inchis([split_inchi2[i] for i in joined_inchi2])
+    
+    differences = compare(joined_inchi1,joined_inchi2)
+    
+    return joined_inchi1, joined_inchi2, differences, p1, p2
