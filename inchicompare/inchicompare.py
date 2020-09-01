@@ -191,6 +191,9 @@ def compare_subset(inchi1, inchi2,
     joined_inchi1 = join_inchis([split_inchi1[i] for i in joined_inchi1])
     joined_inchi2 = join_inchis([split_inchi2[i] for i in joined_inchi2])
     
+    if (joined_inchi1 is None) or (joined_inchi2 is None):
+        return None
+    
     differences = compare(joined_inchi1,joined_inchi2)
     
     return joined_inchi1, joined_inchi2, differences, p1, p2
