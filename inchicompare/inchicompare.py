@@ -4,9 +4,12 @@ import itertools as it
 from collections import defaultdict
 
 def split_inchi(inchi):
-    mol = rdkit.Chem.MolFromInchi(inchi)
-    for m in rdkit.Chem.rdmolops.GetMolFrags(mol,asMols=True):
-        yield rdkit.Chem.MolToInchi(m)
+    try:
+        mol = rdkit.Chem.MolFromInchi(inchi)
+        r = [rdkit.Chem.MolToInchi(m) for m in rdkit.Chem.rdmolops.GetMolFrags(mol,asMols=True)]
+    except:
+        r = [inchi]
+    return r
 
 def split(inchi):
     layers = inchi.split('/') #split into layers with the slash delimiter
