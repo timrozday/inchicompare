@@ -168,7 +168,9 @@ def join_inchis(inchi_list):
         if m:
             r = rdkit.Chem.CombineMols(r,m)
     
-    return rdkit.Chem.MolToInchi(r)
+    try:
+        return rdkit.Chem.MolToInchi(r)
+    except: return None
 
 def compare_subset(inchi1, inchi2, 
                   filter_layers = {'h','q','p','f','i'}):
