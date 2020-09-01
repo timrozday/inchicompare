@@ -9,7 +9,7 @@ def split_inchi(inchi):
         r = [rdkit.Chem.MolToInchi(m) for m in rdkit.Chem.rdmolops.GetMolFrags(mol,asMols=True)]
     except:
         r = [inchi]
-    return r
+    return [i for i in r if not i is None]
 
 def split(inchi):
     layers = inchi.split('/') #split into layers with the slash delimiter
