@@ -236,7 +236,7 @@ def mol_consistent(mol1,mol2):
     
     return True
 
-def compare_consistent(inchi1, inchi2, filter_layers={'h','f','p','q','i','t','b'}):
+def compare_consistent(inchi1, inchi2, filter_layers={'h','f','p','q','i','t','b','m','s'}):
     r = compare_subset(inchi1, inchi2, filter_layers=filter_layers)
     if r:
         joined_inchi1, joined_inchi2, differences, p1, p2 = r
