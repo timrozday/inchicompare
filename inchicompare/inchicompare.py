@@ -204,3 +204,34 @@ def compare_subset(inchi1, inchi2,
     differences = compare(joined_inchi1,joined_inchi2)
     
     return joined_inchi1, joined_inchi2, differences, p1, p2
+
+def mol_consistent(mol1,mol2):
+    # compare chiral centers
+    chiral_compare = defaultdict(list)
+    for atom in mol1.GetAtoms():
+        chiral_compare[atom.GetIdx()].append(atom.GetChiralTag())
+    for atom in mol2.GetAtoms():
+        chiral_compare[atom.GetIdx()].append(atom.GetChiralTag())
+    
+    for k,(a1,a2) in chiral_compare.items():
+        if a1==a2:
+            continue
+        if {a1, a2} & {rdkit.Chem.rdchem.ChiralType.CHI_UNSPECIFIED}:
+            continue
+        return False
+    
+    #compare double bonds
+    doublebond_compare = defaultdict(list)
+    for bond in mol1.GetBonds():
+        doublebond_compare[(bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx())].append(bond.GetStereo())
+    for bond in mol2.GetBonds():
+        doublebond_compare[(bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx())].append(bond.GetStereo())
+        
+    for (begin_atom, end_atom),(b1,b2) in doublebond_compare.items():
+        if b1==b2:
+            continue
+        if {b1, b2} & {rdkit.Chem.rdchem.BondStereo.STEREONONE, rdkit.Chem.rdchem.BondStereo.STEREOANY}:
+            continue
+        return False
+    
+    return True
