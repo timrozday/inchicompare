@@ -213,6 +213,8 @@ def mol_consistent(mol1,mol2):
     for atom in mol2.GetAtoms():
         chiral_compare[atom.GetIdx()].append(atom.GetChiralTag())
     
+    chiral_compare = {k:vs for k,vs in chiral_compare.items() if len(vs) == 2}
+    
     for k,(a1,a2) in chiral_compare.items():
         if a1==a2:
             continue
@@ -223,10 +225,12 @@ def mol_consistent(mol1,mol2):
     #compare double bonds
     doublebond_compare = defaultdict(list)
     for bond in mol1.GetBonds():
-        doublebond_compare[(bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx())].append(bond.GetStereo())
+        doublebond_compare[tuple(sorted([bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx()]))].append(bond.GetStereo())
     for bond in mol2.GetBonds():
-        doublebond_compare[(bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx())].append(bond.GetStereo())
-        
+        doublebond_compare[tuple(sorted([bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx()]))].append(bond.GetStereo())
+    
+    doublebond_compare = {k:vs for k,vs in doublebond_compare.items() if len(vs) == 2}
+    
     for (begin_atom, end_atom),(b1,b2) in doublebond_compare.items():
         if b1==b2:
             continue
