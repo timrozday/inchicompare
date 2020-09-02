@@ -207,13 +207,16 @@ def compare_subset(inchi1, inchi2,
 
 def mol_consistent(mol1,mol2):
     # compare chiral centers
-    chiral_compare = defaultdict(list)
+    chiral_compare = {}
     for atom in mol1.GetAtoms():
-        chiral_compare[atom.GetIdx()].append(atom.GetChiralTag())
+        k = atom.GetIdx()
+        chiral_compare[k] = [atom.GetChiralTag(), None]
     for atom in mol2.GetAtoms():
-        chiral_compare[atom.GetIdx()].append(atom.GetChiralTag())
-    
-    chiral_compare = {k:vs for k,vs in chiral_compare.items() if len(vs) == 2}
+        k = atom.GetIdx()
+        if k in chiral_compare:
+            chiral_compare[k][1] = atom.GetChiralTag()
+        else:
+            chiral_compare[k] = [None, atom.GetChiralTag()]
     
     for k,(a1,a2) in chiral_compare.items():
         if a1==a2:
@@ -223,13 +226,16 @@ def mol_consistent(mol1,mol2):
         return False, chiral_compare
     
     #compare double bonds
-    doublebond_compare = defaultdict(list)
+    doublebond_compare = {}
     for bond in mol1.GetBonds():
-        doublebond_compare[tuple(sorted([bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx()]))].append(bond.GetStereo())
+        k = tuple(sorted([bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx()]))
+        doublebond_compare[k] = [bond.GetStereo(), None]
     for bond in mol2.GetBonds():
-        doublebond_compare[tuple(sorted([bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx()]))].append(bond.GetStereo())
-    
-    doublebond_compare = {k:vs for k,vs in doublebond_compare.items() if len(vs) == 2}
+        k = tuple(sorted([bond.GetBeginAtom().GetIdx(), bond.GetEndAtom().GetIdx()]))
+        if k in doublebond_compare:
+            doublebond_compare[k][1] = bond.GetStereo()
+        else:
+            doublebond_compare[k] = [None, bond.GetStereo()]
     
     for (begin_atom, end_atom),(b1,b2) in doublebond_compare.items():
         if b1==b2:
