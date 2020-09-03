@@ -257,3 +257,11 @@ def compare_consistent(inchi1, inchi2, filter_layers={'h','f','p','q','i','t','b
             return consistent, evidence
     else:
         return False, None
+    
+def strip_inchi(inchi, exclude_inchis):
+    filtered_inchis = []
+    for i in split_inchi(inchi):
+        c = inchi_conn_layer(i)
+        if not c in exclude_inchis:
+            filtered_inchis.append(i)
+    return join_inchis(filtered_inchis)
