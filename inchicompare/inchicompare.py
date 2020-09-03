@@ -258,14 +258,14 @@ def compare_consistent(inchi1, inchi2, filter_layers={'h','f','p','q','i','t','b
     else:
         return False, None
     
-def strip_inchi(inchi, exclude_inchis):
-    def inchi_conn_layer(inchi):
-        version, cf, layers = parse(inchi)
-        if 'c' in layers:
-            return f"InChI=1S/{cf}/c{layers['c']}"
-        else:
-            return f"InChI=1S/{cf}"
+def inchi_conn_layer(inchi):
+    version, cf, layers = parse(inchi)
+    if 'c' in layers:
+        return f"InChI=1S/{cf}/c{layers['c']}"
+    else:
+        return f"InChI=1S/{cf}"
     
+def strip_inchi(inchi, exclude_inchis):    
     filtered_inchis = []
     for i in split_inchi(inchi):
         c = inchi_conn_layer(i)
