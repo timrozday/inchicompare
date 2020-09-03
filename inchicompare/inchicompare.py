@@ -77,8 +77,16 @@ def get_prefixes():
 def parse(inchi):
     inchi = inchi.split('/')
     
-    version = inchi[0]
-    cf = inchi[1]
+    try:
+        version = inchi[0]
+    except:
+        version = ""
+        
+    try:
+        cf = inchi[1]
+    except:
+        cf = ""
+        
     layers = {}
     for layer in inchi[2:]:
         prefix = layer[0]
