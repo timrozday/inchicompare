@@ -258,7 +258,13 @@ def compare_consistent(inchi1, inchi2, filter_layers={'h','f','p','q','i','t','b
     r = compare_subset(inchi1, inchi2, filter_layers=filter_layers)
     if r:
         joined_inchi1, joined_inchi2, differences, p1, p2 = r
-        consistent, evidence = mol_consistent(rdkit.Chem.MolFromInchi(joined_inchi1), rdkit.Chem.MolFromInchi(joined_inchi2))
+        
+        mol1 = rdkit.Chem.MolFromInchi(joined_inchi1)
+        mol2 = rdkit.Chem.MolFromInchi(joined_inchi2)
+        if mol1 is None or mol2 is None:
+            return False, None
+        
+        consistent, evidence = mol_consistent(mol1, mol2)
         if consistent:
             return True, (differences, p1, p2)
         else:
