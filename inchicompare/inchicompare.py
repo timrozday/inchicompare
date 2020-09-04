@@ -199,6 +199,9 @@ def compare_subset(inchi1, inchi2,
         if not (i1 in joined_inchi1 or i2 in joined_inchi2):
             joined_inchi1.append(i1)
             joined_inchi2.append(i2)
+            
+    if (len(joined_inchi1) == 0) or (len(joined_inchi2) == 0):
+        return None
     
     p1 = (len(joined_inchi1),len(split_inchi1))
     p2 = (len(joined_inchi2),len(split_inchi2))
