@@ -171,7 +171,7 @@ def join_inchis(inchi_list):
         return None
     
     r = rdkit.Chem.MolFromInchi(inchi_list[0])
-    for i in inchi_list:
+    for i in inchi_list[1:]:
         m = rdkit.Chem.MolFromInchi(i)
         if m:
             r = rdkit.Chem.CombineMols(r,m)
